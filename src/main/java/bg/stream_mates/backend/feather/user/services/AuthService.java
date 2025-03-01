@@ -73,6 +73,8 @@ public class AuthService {
         cookie.setSecure(false);
         cookie.setPath("/");
         cookie.setMaxAge((int) TimeUnit.HOURS.toSeconds(47));
+        cookie.setAttribute("SameSite", "None"); // 👈 ТОВА Е ВАЖНО!
+        
         response.addCookie(cookie);
 
         return user;
@@ -105,6 +107,7 @@ public class AuthService {
         cookie.setSecure(true);  // Ако работиш в HTTPS, сложи true
         cookie.setPath("/");  // Валиден за целия сайт
         cookie.setMaxAge((int) TimeUnit.HOURS.toSeconds(47));  // Време на живот 48 часа
+        cookie.setAttribute("SameSite", "None"); // 👈 ТОВА Е ВАЖНО!
 
         response.addCookie(cookie);  // Добавя cookie-то в отговора
         return data;
@@ -134,6 +137,7 @@ public class AuthService {
                 invalidCookie.setSecure(true);         // Съвпада с настройките при логин
                 invalidCookie.setPath("/");
                 invalidCookie.setMaxAge(0);             // Бисквитката се изтрива веднага
+                invalidCookie.setAttribute("SameSite", "None"); // 👈 ТОВА Е ВАЖНО!
                 response.addCookie(invalidCookie);
 
                 break;
