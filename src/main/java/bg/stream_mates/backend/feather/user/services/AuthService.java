@@ -98,8 +98,8 @@ public class AuthService {
         redisTemplate.opsForValue().set(String.valueOf(user.getId()), token, 47, TimeUnit.HOURS);
 
         Cookie cookie = new Cookie("JWT_TOKEN", token);
-        cookie.setHttpOnly(true);
-        cookie.setSecure(true);
+        cookie.setHttpOnly(false);
+        cookie.setSecure(false);
         cookie.setPath("/");
         cookie.setMaxAge((int) TimeUnit.HOURS.toSeconds(47));
 
