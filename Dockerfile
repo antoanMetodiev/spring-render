@@ -1,20 +1,26 @@
-FROM eclipse-temurin:17-jdk AS build
+# Етап 1: Създаване на JAR файла (build stage)
+FROM gradle:7.4-jdk17 AS build
 
 WORKDIR /app
 
-COPY gradle gradle
-COPY build.gradle.kts settings.gradle.kts gradlew ./
-COPY src src
+# Копиране на всички файлове от проекта в контейнера
+COPY . .
 
-RUN chmod +x ./gradlew \
-    && ./gradlew build --no-daemon
+# Дава права за изпълнение на gradlew (ако е нужно)
+RUN chmod +x ./gradlew
 
-FROM eclipse-temurin:17-jre
+# Изграждане на JAR файла
+RUN ./gradlew bootJar --no-daemon
+
+# Етап 2: Създаване на финален образ
+FROM openjdk:17-jre-slim
 
 WORKDIR /app
 
-COPY --from=build /app/build/libs/*.jar app.jar
+# Копиране на JAR файла от предишния етап
+COPY --from=build /app/build/libs/*.jar /app/app.jar
 
 EXPOSE 8080
 
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Стартиране на приложението
+ENTRYPOINT ["java", "-jar", "/app/app.jar"]
