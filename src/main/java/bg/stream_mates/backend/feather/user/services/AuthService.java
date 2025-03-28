@@ -97,17 +97,12 @@ public class AuthService {
         // Съхранявам токена!
         redisTemplate.opsForValue().set(String.valueOf(user.getId()), token, 47, TimeUnit.HOURS);
 
-        Cookie cookie = new Cookie("JWT_TOKEN", token);
-        cookie.setHttpOnly(false);
-        cookie.setSecure(true); // Това е важно за продукционни среди!
-        cookie.setPath("/");
-        cookie.setMaxAge((int) TimeUnit.HOURS.toSeconds(47));
-
-        // Добавяне на атрибута SameSite в самия Set-Cookie заглавие
-        String cookieWithSameSite = String.format("JWT_TOKEN=%s; Path=/; HttpOnly=false; Secure=true; Max-Age=%d; SameSite=None;", token, (int) TimeUnit.HOURS.toSeconds(47));
+        String cookieWithSameSite = String.format(
+                "JWT_TOKEN=%s; Path=/; HttpOnly=false; Secure=true; Max-Age=%d; SameSite=None;",
+                token, (int) TimeUnit.HOURS.toSeconds(47)
+        );
         response.addHeader("Set-Cookie", cookieWithSameSite);
 
-        response.addCookie(cookie);
         return user;
     }
 
