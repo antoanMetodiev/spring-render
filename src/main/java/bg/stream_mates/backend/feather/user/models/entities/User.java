@@ -1,17 +1,14 @@
 package bg.stream_mates.backend.feather.user.models.entities;
 
 import bg.stream_mates.backend.feather.user.models.enums.UserRole;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.Accessors;
 import org.hibernate.validator.constraints.URL;
 
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Table(name = "users")
@@ -36,29 +33,42 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    @Column(name = "first_name", nullable = false)
-    private String firstName;
-
-    @Column(name = "last_name", nullable = false)
-    private String lastName;
+    @Column(name = "full_name", nullable = false)
+    private String fullName;
 
     @Column(name = "profile_image_url")
     @URL
     private String profileImageURL;
 
+    @Column(name = "background_image_url")
+    @URL
+    private String backgroundImageURL;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "user_role")
     private UserRole userRole = UserRole.RECRUIT;
 
+    @OneToMany(mappedBy = "owner", fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    @ToString.Exclude
+    private List<UserImage> images = new ArrayList<>();
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinTable(
             name = "user_friends",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "friend_id")
     )
-    private List<Friend> friends;
+    private Set<Friend> friends = new HashSet<>();
 
-    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<UserImage> images;
+    // Покани, които този потребител е изпратил
+    @OneToMany(mappedBy = "sender", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST, orphanRemoval = true)
+    @JsonManagedReference
+    private List<FriendRequest> sentFriendRequests = new ArrayList<>();
+
+    // Покани, които този потребител е получил
+    @OneToMany(mappedBy = "receiver", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST, orphanRemoval = true)
+    @JsonManagedReference
+    private List<FriendRequest> receivedFriendRequests = new ArrayList<>();
 }
