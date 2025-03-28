@@ -1,34 +1,20 @@
-# Етап 1: Създаване на JAR файла
-FROM ubuntu:latest AS build
-
-RUN apt-get update && apt-get install -y \
-    openjdk-17-jdk \
-    wget \
-    unzip \
-    curl \
-    git \
-    && rm -rf /var/lib/apt/lists/*
+FROM eclipse-temurin:17-jdk AS build
 
 WORKDIR /app
 
-# Копиране на всички файлове от проекта в контейнера
-COPY . .
+COPY gradle gradle
+COPY build.gradle.kts settings.gradle.kts gradlew ./
+COPY src src
 
-# Дава права за изпълнение на gradlew (ако е нужно)
-RUN chmod +x ./gradlew
+RUN chmod +x ./gradlew \
+    && ./gradlew build --no-daemon
 
-# Изграждане на JAR файла
-RUN ./gradlew bootJar --no-daemon
-
-# Етап 2: Създаване на финален образ
-FROM openjdk:17-jdk-slim
+FROM eclipse-temurin:17-jre
 
 WORKDIR /app
 
-# Копиране на JAR файла от предишния етап
-COPY --from=build /app/build/libs/*.jar /app/app.jar
+COPY --from=build /app/build/libs/*.jar app.jar
 
 EXPOSE 8080
 
-# Стартиране на приложението
-ENTRYPOINT ["java", "-jar", "/app/app.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]
