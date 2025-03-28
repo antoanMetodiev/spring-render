@@ -47,9 +47,12 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOriginPatterns(Arrays.asList("http://localhost:5173", "https://*.netlify.app"));
+        configuration.setAllowedOriginPatterns(Arrays.asList("http://localhost:5173",
+                "https://stream-mate-org.netlify.app"));
+
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowCredentials(true);
+
         configuration.addExposedHeader("Access-Control-Allow-Credentials");
         configuration.setAllowedHeaders(Arrays.asList(
                 "Authorization",
