@@ -167,7 +167,7 @@ public class UserService extends TextWebSocketHandler {
             maxAttempts = 2,
             backoff = @Backoff(delay = 2000)
     )
-    public void acceptFriendRequest(String senderUsername, String receiverUsername) {
+    public Friend acceptFriendRequest(String senderUsername, String receiverUsername) {
         this.friendRequestRepository.deleteBySenderUsernameAndReceiverUsername(receiverUsername, senderUsername);
 
         User myData = this.userRepository.findByUsername(senderUsername)
@@ -177,7 +177,7 @@ public class UserService extends TextWebSocketHandler {
                 .orElseThrow(() -> new UserNotFoundException("Receiver user not found"));
 
         // Пазеща проверка, ако случайно потребителя вече го имам в приятели:
-        if (checkIfIContainFriendAlready(myData, receiverUsername)) return;
+        if (checkIfIContainFriendAlready(myData, receiverUsername)) return null;
 
         // Проверка дали приятелят вече съществува в базата
         Friend friendForMyData = this.friendRepository.findByUsername(receiverData.getUsername())
@@ -205,6 +205,7 @@ public class UserService extends TextWebSocketHandler {
 
         // Hibernate ще управлява записа, така че не е нужно ръчно да съхранявам Friends, ръчно
         this.userRepository.saveAll(Arrays.asList(myData, receiverData));
+        return friendForMyData;
     }
 
     private boolean checkIfIContainFriendAlready(User myData, String receiverUsername) {
