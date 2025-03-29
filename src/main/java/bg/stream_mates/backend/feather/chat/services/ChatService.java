@@ -53,7 +53,7 @@ public class ChatService extends TextWebSocketHandler {
 
     @Transactional
     public List<Message> getMessagesWithFriend(String myId, String friendId) {
-        return this.chatRepository.getMessagesWithFriend(myId, friendId);
+        return this.chatRepository.getMessagesWithFriend(UUID.fromString(myId), UUID.fromString(friendId));
     }
 
     // ПОЛУЧАВА С WebSocket:
