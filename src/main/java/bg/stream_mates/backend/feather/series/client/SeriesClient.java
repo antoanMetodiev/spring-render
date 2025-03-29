@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
-@FeignClient(name = "stream-mate-series-svc", url = "https://stream-mate-series.onrender.com", configuration = FeignConfig.class)
+@FeignClient(name = "stream-mate-series-svc", url = "https://rich-babs-stream-mate-series-9d8a10c3.koyeb.app", configuration = FeignConfig.class)
 public interface SeriesClient {
 
     @GetMapping("/get-next-thirty-series")
