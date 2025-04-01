@@ -1,7 +1,6 @@
 package bg.stream_mates.backend.feather.user.services;
 
 import bg.stream_mates.backend.exception.EmptyUsernameException;
-import bg.stream_mates.backend.exception.FriendRequestNotFoundException;
 import bg.stream_mates.backend.exception.UserNotFoundException;
 import bg.stream_mates.backend.feather.user.handlers.FriendRequestNotificationHandler;
 import bg.stream_mates.backend.feather.user.models.dtos.EditProfileRequest;
@@ -28,7 +27,10 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.io.IOException;
 import java.time.Instant;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -147,7 +149,12 @@ public class UserService extends TextWebSocketHandler {
         User user = userRepository.findById(UUID.fromString(userImage.getOwnerId()))
                 .orElseThrow(() -> new UserNotFoundException("User is not found!"));
 
-        UserImageType userImageType = userImage.getUserImageType().equals("WALLPAPER") ? UserImageType.WALLPAPER
+        if (user.getImages() == null) {
+            user.setImages(new ArrayList<>());
+        }
+
+        UserImageType userImageType = userImage.getUserImageType().equals("WALLPAPER")
+                ? UserImageType.WALLPAPER
                 : UserImageType.PLAIN;
 
         UserImage img = UserImage.builder()
@@ -208,7 +215,7 @@ public class UserService extends TextWebSocketHandler {
         return friendForMyData;
     }
 
-    private boolean checkIfIContainFriendAlready(User myData, String receiverUsername) {
+    public boolean checkIfIContainFriendAlready(User myData, String receiverUsername) {
         return !myData.getFriends().stream().filter(friend -> friend.getUsername()
                 .equals(receiverUsername)).collect(Collectors.toList()).isEmpty();
     }
