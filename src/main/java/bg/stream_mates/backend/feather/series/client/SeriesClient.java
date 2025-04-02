@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
-@FeignClient(name = "stream-mate-series-svc", url = "https://rich-babs-stream-mate-series-9d8a10c3.koyeb.app", configuration = FeignConfig.class)
+@FeignClient(name = "stream-mate-series-svc", url = "https://awake-dedie-stream-mate-series-original-5f9d74bf.koyeb.app", configuration = FeignConfig.class)
 //@FeignClient(name = "stream-mate-series-svc", url = "http://localhost:8082", configuration = FeignConfig.class)
 public interface SeriesClient {
 
