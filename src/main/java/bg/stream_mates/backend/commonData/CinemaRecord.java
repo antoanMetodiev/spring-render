@@ -14,7 +14,7 @@ import java.time.Instant;
 @Accessors(chain = true)
 @MappedSuperclass
 public abstract class CinemaRecord {
-
+    
     @Size(min = 2)
     private String title;
 
